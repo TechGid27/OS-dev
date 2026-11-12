@@ -85,6 +85,34 @@ make smoke PY=python
 `PY=python` is needed because Windows usually calls Python `python`, not `python3`.
 `AUDIO=dsound` is the Windows sound backend. Use `AUDIO=none` to run without sound.
 
+#### Windows PowerShell (without make)
+
+This runs the OS directly with NASM and QEMU. Adjust the QEMU path if it is
+installed somewhere else.
+
+```powershell
+# 1. build the game binary (needed by the OS image)
+cd "OS dev\shooter"
+python tools\genlevel.py level.inc level_src.txt stage2_src.txt stage3_src.txt stage4_src.txt stage5_src.txt
+python tools\genart.py art.inc
+nasm -f bin game.asm -o game.bin
+
+# 2. build the OS: boot sector, stage2 loader, kernel, then the image
+cd "..\os"
+nasm -f bin boot.asm -o boot.bin
+nasm -f bin stage2.asm -o stage2.bin
+nasm -f bin kernel.asm -o kernel.bin
+python mkos.py
+
+# 3. run it in QEMU (always give format=raw, or QEMU warns about the image)
+& "C:\Program Files\qemu\qemu-system-x86_64.exe" `
+  -drive file=os.img,format=raw,if=floppy,index=0 -boot a `
+  -audiodev dsound,id=snd0 -machine pcspk-audiodev=snd0
+```
+
+If `python mkos.py` cannot find `game.bin`, check that step 1 finished without errors.
+If you do not need sound, remove the last line (`-audiodev ...`) and the `-machine` part.
+
 ---
 
 ## Directory structure
