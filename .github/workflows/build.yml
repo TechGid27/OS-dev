@@ -1,0 +1,38 @@
+name: build
+
+on:
+  push:
+    branches: [main, develop, workflows]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nasm make python3 qemu-system-x86
+
+      - name: Build and smoke-test the shooter
+        working-directory: shooter
+        run: |
+          make
+          make smoke
+
+      - name: Build the OS image
+        working-directory: os
+        run: make
+
+      - name: Upload floppy images
+        uses: actions/upload-artifact@v4
+        with:
+          name: floppy-images
+          path: |
+            shooter/shooter.img
+            os/os.img
+          if-no-files-found: error
