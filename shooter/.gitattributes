@@ -1,0 +1,7 @@
+* text=auto
+Makefile text eol=lf
+*.py text eol=lf
+*.bin binary
+*.img binary
+*.ppm binary
+*.png binary
