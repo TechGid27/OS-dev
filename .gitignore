@@ -1,0 +1,17 @@
+# build outputs (rebuilt by make)
+os/os.img
+os/boot.bin
+os/stage2.bin
+os/kernel.bin
+shooter/shooter.img
+shooter/boot.bin
+shooter/game.bin
+shooter/art.inc
+shooter/level.inc
+
+# debug screenshots from testing (keep the folder, not the files)
+shooter/images/*
+!shooter/images/.gitkeep
+
+*.pyc
+__pycache__/
