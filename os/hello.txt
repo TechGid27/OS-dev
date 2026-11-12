@@ -1,0 +1,9 @@
+HELLO FROM THE OS!
+
+This file was read from the disk by the
+kernel and is shown on the screen here.
+
+Files on this disk: HELLO.TXT, PIC.IMG,
+MUSIC.SPK, CLIP.VID and DUKE.BIN.
+
+Press B to go back to the file list.
