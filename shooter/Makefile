@@ -2,6 +2,8 @@
 NASM  = nasm
 QEMU  = qemu-system-i386
 PY    = python3
+AUDIO ?= pa
+# QEMU audio backend: pa (Linux PulseAudio), dsound (Windows), none
 IMG   = shooter.img
 INCS  = $(wildcard *.inc level_src.txt stage*_src.txt tools/genlevel.py)
 STAGES = level_src.txt stage2_src.txt stage3_src.txt stage4_src.txt stage5_src.txt
@@ -36,7 +38,7 @@ $(IMG): boot.bin game.bin
 
 run: $(IMG)
 	$(QEMU) -drive file=$(IMG),format=raw,if=floppy,index=0 -boot a \
-	        -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0
+	        -audiodev $(AUDIO),id=snd0 -machine pcspk-audiodev=snd0
 
 # headless smoke test: start game (Enter), move right, screenshot (>= 3 colors)
 smoke: $(IMG)

@@ -19,9 +19,9 @@ No external libraries are used at runtime.
 | --- | --- |
 | `nasm` | assembling the OS and the game (always) |
 | `make` | the build targets (always) |
-| `python3` | build scripts: `genlevel.py`, `genart.py`, `mkos.py` (always) |
+| `python3` (`python` on Windows) | build scripts: `genlevel.py`, `genart.py`, `mkos.py` (always) |
 | `qemu-system-i386` | `make run`, `make smoke` |
-| PulseAudio (`pa`) | sound in `make run`. Remove the `-audiodev pa,...` flags from the Makefile if you do not have it |
+| sound backend | `make run` uses `AUDIO=pa` (PulseAudio) by default. Windows: `AUDIO=dsound`. No sound: `AUDIO=none`. |
 | Python `numpy`, `Pillow`, `scipy` | only `make assets` (OS) and `make extract` (shooter) |
 | `ffmpeg`, `ffprobe` | only `make assets`, to extract video frames |
 
@@ -33,16 +33,57 @@ regenerated from the Downloads folder.
 
 ## Quick start
 
+### Linux (Fedora, Ubuntu, Debian)
+
+Install the tools:
+
+```sh
+# Fedora
+sudo dnf install nasm qemu-system-x86 make python3
+# Ubuntu / Debian
+sudo apt install nasm qemu-system-x86 make python3
+```
+
+Build and run:
+
 ```sh
 cd "OS dev/os"
-make            # builds os.img (also builds the game, see below)
-make run        # starts the OS in QEMU
+make            # builds os.img (also builds the game)
+make run        # starts the OS in QEMU with PulseAudio sound
 
 cd "OS dev/shooter"
 make            # builds shooter.img, the game as a standalone floppy image
 make run        # starts the game alone in QEMU
 make smoke      # headless test: starts the game, takes a screenshot, checks it
 ```
+
+### Windows 10 / 11
+
+The Makefiles use Unix tools (`cat`, `truncate`, `stat`, `rm`, `bash`). Use
+**Git Bash** (installed with Git for Windows) as the terminal.
+
+1. **Git for Windows**: <https://git-scm.com/download/win>. This gives Git Bash.
+2. **NASM**: <https://www.nasm.us>. Add it to `PATH`.
+3. **QEMU for Windows**: <https://www.qemu.org/download/#windows>. Add the install
+   folder (the one with `qemu-system-i386.exe`) to `PATH`.
+4. **Python 3**: <https://www.python.org/downloads/>. Tick "Add python.exe to PATH".
+5. **GNU Make**: `choco install make` (Chocolatey), or install `make` from MSYS2.
+
+Open Git Bash in the `OS dev` folder, then:
+
+```sh
+cd "os"
+make PY=python AUDIO=dsound    # build os.img
+make run PY=python AUDIO=dsound
+
+cd "../shooter"
+make PY=python AUDIO=dsound    # build shooter.img
+make run PY=python AUDIO=dsound
+make smoke PY=python
+```
+
+`PY=python` is needed because Windows usually calls Python `python`, not `python3`.
+`AUDIO=dsound` is the Windows sound backend. Use `AUDIO=none` to run without sound.
 
 ---
 
